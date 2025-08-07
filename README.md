@@ -2,7 +2,7 @@
 
 # NLMpy <img src="images/logo.png" align="right" width="200" />
 
-`NLMpy` is a Python package for the creation of neutral landscape models that 
+Test `NLMpy` is a Python package for the creation of neutral landscape models that 
 are widely used by landscape ecologists to model ecological patterns across 
 landscapes.  `NLMpy` can create both continuous patterns to represent landscape 
 characteristics such as elevation or moisture gradients, or categorical patterns 
