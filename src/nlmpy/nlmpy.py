@@ -1126,3 +1126,33 @@ def bspPartitioning(n, bspSpace, bspTree, leafNodes, patchDims, treeHeights,
     return(bspSpace, bspTree, leafNodes, patchDims, treeHeights)
 
 #------------------------------------------------------------------------------
+
+def correlationMatrix(arrays):
+    """
+    Calculate a correlation matrix amongst a list of arrays using Kendall's tau
+    variant 'c'.
+
+    Parameters
+    ----------
+    arrays : list
+        List of 2D arrays.
+        
+    Returns
+    -------
+    out : array
+        2D matrix array with values equal to the correlation between each pair
+        of arrays.  Rows and columns for each pair are ordered as per the input
+        list.
+    """
+    n = len(arrays)
+    corrMatrix = np.ones((n, n))
+    # Loop through pair-wise combinations of data
+    for i in range(n - 1): # as last point is not required
+        for j in range(i + 1, n): # + 1 to avoid same pair comparison
+            # Calculate correlation between data pair
+            corr = stats.kendalltau(arrays[i].flatten(), arrays[j].flatten(), variant='c')[0]
+            corrMatrix[i, j] = corr
+            corrMatrix[j, i] = corr
+    return(corrMatrix)
+
+#------------------------------------------------------------------------------
