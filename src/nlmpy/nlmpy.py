@@ -27,8 +27,9 @@
 #------------------------------------------------------------------------------
 
 import sys
+import pathlib
 import numpy as np
-from scipy import ndimage
+from scipy import ndimage, stats, interpolate
 from numba import jit
 
 #------------------------------------------------------------------------------
@@ -1154,5 +1155,79 @@ def correlationMatrix(arrays):
             corrMatrix[i, j] = corr
             corrMatrix[j, i] = corr
     return(corrMatrix)
+
+#------------------------------------------------------------------------------
+
+def rankRescale(nlm, data):
+    """
+    A rescale in which the values in the NLM are rank rescaled to match the 
+    values in the data array.  The arrays must be of the same size and shape.
+
+    Parameters
+    ----------
+    nlm : array
+        2D array of nlm values.
+    data : array
+        2D array of data values.
+        
+    Returns
+    -------
+    out : array
+        2D array with rank rescaled values.
+    """
+    data1D = data.flatten()
+    dataSorted = np.sort(data1D)
+    nlm1D = nlm.flatten()
+    nlmIndex1D = np.argsort(nlm1D)
+    n = nlmIndex1D.shape[0]
+    nlmOrder = np.linspace(start = 0, stop = n - 1, num = n, dtype='int')
+    nlmOrder[nlmIndex1D] = np.linspace(start = 0, stop = n - 1, num = n, dtype='int')
+    nlmRescaled = dataSorted[nlmOrder]
+    nlmRescaled = np.reshape(nlmRescaled, nlm.shape)
+    return(nlmRescaled)
+
+#------------------------------------------------------------------------------
+
+def nlmDataMatch(nlm, data):
+    """
+    Match a set of NLMs to a set of data using: (1) a correlation matrix and 
+    blending to ensure relationships between the NLMs match the data 
+    relationships, and (2) rank rescaling such that the values of the NLMs 
+    match the values of the data.
+
+    Parameters
+    ----------
+    nlm : iterable
+        A list or tuple of 2D NumPy arrays each of which is an NLM.
+    data : iterable
+        A list or tuple of 2D NumPy arrays each of which represent data to 
+        match the NLMs to.
+
+    Returns
+    -------
+    out : list
+        List of 2D NumPy arrays each of which is an NLM with values and 
+        relationships matched to the provided data.
+
+    """
+    n = len(nlm)
+    # Calculate correlation matrix for the data arrays
+    dataCorMatrix = correlationMatrix(data)
+    # Correct correlations ahead of blending
+    inFile = pathlib.Path(__file__).parent / 'data/blendCorrectionData.txt'
+    correctionData = np.loadtxt(inFile)
+    f = interpolate.interp1d(correctionData[:,0], correctionData[:,1])
+    dataCorMatrix = f(dataCorMatrix)
+    # Loop through NLMs blending
+    nlmBlends = []
+    for i in range(n):
+        nlmBlend = blendArrays(arrays = nlm, weights = dataCorMatrix[i,:])
+        nlmBlends.append(nlmBlend)    
+    # Replace NLM values with real values
+    nlmMatched = []
+    for i in range(n):
+        nlmValued = rankRescale(nlmBlends[i], data[i])
+        nlmMatched.append(nlmValued)
+    return(nlmMatched)
 
 #------------------------------------------------------------------------------
