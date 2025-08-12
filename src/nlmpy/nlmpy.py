@@ -56,7 +56,6 @@ def linearRescale01(array):
 
 #------------------------------------------------------------------------------
 
-# A function to insert nan cells into an array based on a binary mask array.
 def maskArray(array, maskArray):
     """    
     Return the array with nan values inserted where present in the mask array.
@@ -998,7 +997,7 @@ def bspPartitioning(n, bspSpace, bspTree, leafNodes, patchDims, treeHeights,
         ((min row, max row), (min col, max col)).
     treeHeights: dictionary
         Keyed by tree height, this dictionary returns a list of the patches at 
-        the specified BSP tree height.  
+        the specified BSP tree height.
     partOrient: string
         One of 'longest', 'random', 'horizontal', 'vertical' that specifies the
         prefered orientation of the patch BSP, default value is 'longest'
@@ -1062,7 +1061,7 @@ def bspPartitioning(n, bspSpace, bspTree, leafNodes, patchDims, treeHeights,
         minRow, maxRow = patchDims[randomLeafNode][0]
         minCol, maxCol = patchDims[randomLeafNode][1]
         dimCols = maxCol - minCol
-        dimRows = maxRow - minRow        
+        dimRows = maxRow - minRow
         # Check probability of partition
         patch = p[minRow:maxRow, minCol:maxCol]
         if np.sum(np.isfinite(patch)) > 0: # check not all nan
@@ -1079,7 +1078,7 @@ def bspPartitioning(n, bspSpace, bspTree, leafNodes, patchDims, treeHeights,
                 else:
                     # Apply the defined orientation if there is one
                     if partOrient != 'random':
-                        orientation = partOrient        
+                        orientation = partOrient
                     # Check the resulting length width ratio is within the limit, 
                     # and if not then switch the partition direction
                     if orientation == 'horizontal':
@@ -1095,12 +1094,12 @@ def bspPartitioning(n, bspSpace, bspTree, leafNodes, patchDims, treeHeights,
                         partitionCheck = True
                 if orientation == 'vertical':
                     if dimCols >= 2:
-                        partitionCheck = True            
+                        partitionCheck = True
                 # Partion patch
                 if partitionCheck == True:
                     patchCount = patchCount + 1
                     height = leafNodes[randomLeafNode]
-                    del leafNodes[randomLeafNode]               
+                    del leafNodes[randomLeafNode]
                     if orientation == 'horizontal':
                         partitionRow = int(minRow + (dimRows / 2))
                         bspSpace[minRow:partitionRow, minCol:maxCol] = maxLeafNode + 1
