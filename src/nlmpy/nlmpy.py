@@ -1149,8 +1149,14 @@ def correlationMatrix(arrays):
     # Loop through pair-wise combinations of data
     for i in range(n - 1): # as last point is not required
         for j in range(i + 1, n): # + 1 to avoid same pair comparison
+            # Flatten arrays
+            iFlat = arrays[i].flatten()
+            jFlat = arrays[j].flatten()
+            # Remove any nan values
+            iFlat = iFlat[~np.isnan(iFlat)]
+            jFlat = jFlat[~np.isnan(jFlat)]
             # Calculate correlation between data pair
-            corr = stats.kendalltau(arrays[i].flatten(), arrays[j].flatten(), variant='c')[0]
+            corr = stats.kendalltau(iFlat, jFlat, variant='c')[0]        
             corrMatrix[i, j] = corr
             corrMatrix[j, i] = corr
     return(corrMatrix)
