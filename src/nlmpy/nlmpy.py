@@ -1198,7 +1198,8 @@ def nlmDataMatch(nlm, data):
     Match a set of NLMs to a set of data using: (1) a correlation matrix and 
     blending to ensure relationships between the NLMs match the data 
     relationships, and (2) rank rescaling such that the values of the NLMs 
-    match the values of the data.
+    match the values of the data.  All the NLM and data 2D arrays must have the
+    same dimensions, and any nan values must match for all the arrays.
 
     Parameters
     ----------
