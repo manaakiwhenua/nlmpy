@@ -51,7 +51,7 @@ def linearRescale01(array):
     out : array
         2D array with rescaled values.
     """
-    rescaledArray = (array - np.nanmin(array)) / np.nanmax(array - np.nanmin(array))
+    rescaledArray = (array - np.nanmin(array)) / (np.nanmax(array) - np.nanmin(array))
     return(rescaledArray)
 
 #------------------------------------------------------------------------------
@@ -223,7 +223,8 @@ def classifyArray(array, weights, classifyMask=None):
 
 def blendArrays(arrays, weights=None):
     """    
-    Blend arrays as weighted arithmetic mean, then rescale zero to one.
+    Blend arrays by summing arrays muliplied by weights then rescale zero to 
+    one.
 
     Parameters
     ----------
@@ -242,9 +243,8 @@ def blendArrays(arrays, weights=None):
     combinedArrays = np.zeros(arrays[0].shape)
     for n in range(len(arrays)):
         combinedArrays = combinedArrays + (arrays[n] * weights[n])
-    blendedArray = combinedArrays / np.sum(weights)
-    rescaledArray = linearRescale01(blendedArray)
-    return(rescaledArray)
+    blendedArray = linearRescale01(combinedArrays)
+    return(blendedArray)
     
 #------------------------------------------------------------------------------
 
